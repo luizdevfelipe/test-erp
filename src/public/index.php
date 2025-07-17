@@ -12,8 +12,8 @@ $app = new Application();
 
 $router = new Router();
 
-$router->get('/', [ProductController::class, 'createProductView']);
-$router->post('/produto', [ProductController::class, 'createProduct']);
+$router->get('/', [ProductController::class, 'productView']);
+$router->post('/', [ProductController::class, 'createNewProduct']);
 $router->get('/produtos', [ProductController::class, 'listProducts']);
 
 $response = $router->dispatch($_SERVER["REQUEST_URI"], $_SERVER["REQUEST_METHOD"]);

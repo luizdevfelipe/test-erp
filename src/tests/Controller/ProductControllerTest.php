@@ -15,18 +15,4 @@ class ProductControllerTest extends BaseTestCase
         parent::setUp();
         $this->controller = Application::getContainer()->get(ProductController::class);
     }
-    
-    public function test_create_new_product()
-    {
-        // Arrange
-        $productData = [
-            'name' => 'Test Product',
-            'price' => 100.00,
-            'stock' => 50,
-        ];
-        $this->controller->createNewProduct();
-        // Act
-
-        // Assert
-    }
 }

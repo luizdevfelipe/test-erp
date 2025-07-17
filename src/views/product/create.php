@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +25,7 @@
                 </div>
             <?php endif; ?>
             
-            <form class="" action="/produto" method="post">
+            <form class="" action="/" method="post">
                 <legend class="text-center">Crie um novo produto</legend>
                 <div id="data">
                     <div class="mb-3">
@@ -52,28 +52,36 @@
         </div>
 
         <div class="container">
-            <table class="table table-striped mt-4">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Preço</th>
-                        <th>Estoque</th>
-                        <th>Opções</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Aqui você pode adicionar dinamicamente as variações do produto -->
-                    <tr>
-                        <td>Variação 1</td>
-                        <td>R$ 10.00</td>
-                        <td>100</td>
-                        <td>
-                            <button id="change" data-id="1">Alterar</button>
-                            <button id="buy" data-id="1">Comprar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <?php if (!empty($products)) : ?>
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Opções</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aqui você pode adicionar dinamicamente as variações do produto -->
+                        <tr>
+                            <?php foreach ($products as $product) : ?>
+                                <td><?= htmlspecialchars($product['produto_nome']) ?></td>
+                                <td>R$ <?= number_format($product['produto_preco'], 2, ',', '.') ?></td>
+                                <td><?= htmlspecialchars($product['produto_quantidade']) ?></td>
+                                <td>
+                                <button id="change" data-id="<?= htmlspecialchars($product['produto_id']) ?>">Alterar</button>
+                                <button id="buy" data-id="<?= htmlspecialchars($product['produto_id']) ?>">Comprar</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="alert alert-warning m-5">
+                    Nenhum produto encontrado.
+                </div>
+            <?php endif; ?>
         </div>
     </main>
 
@@ -84,12 +92,12 @@
             variationDiv.className = 'mb-3';
             variationDiv.innerHTML = `
                 <div class="bg-light p-2 rounded">
-                    <label for="variation" class="form-label">Variação</label>
-                    <input type="text" class="form-control" name="variation[]" required>
-                    <label for="variationPrice" class="form-label">Preço da Variação (opcional)</label>
-                    <input type="number" step="0.01" class="form-control" name="variationPrice[]">
-                    <label for="variationStock" class="form-label">Estoque da Variação</label>
-                    <input type="number" step="1" class="form-control" name="variationStock[]" required>
+                    <label for="variation_name" class="form-label">Variação</label>
+                    <input type="text" class="form-control" name="variation[name][]" required>
+                    <label for="variation_price" class="form-label">Preço da Variação (opcional)</label>
+                    <input type="number" step="0.01" class="form-control" name="variation[price][]">
+                    <label for="variation_stock" class="form-label">Estoque da Variação</label>
+                    <input type="number" step="1" class="form-control" name="variation[stock][]" required>
                 </div>
             `;
             dataDiv.appendChild(variationDiv);

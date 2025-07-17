@@ -7,12 +7,12 @@ use PDOException;
 
 class DBConnection
 {
-    private ?PDO $connection = null;
+    protected static ?PDO $connection = null;
 
     public function __construct()
     {
         try {
-            $this->connection = new PDO(
+            static::$connection = new PDO(
                 'mysql:host='. $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_DATABASE'],
                 $_ENV['DB_USER'],
                 $_ENV['DB_PASSWORD'],
@@ -26,13 +26,13 @@ class DBConnection
         }
     }
 
-    public function isInitialized(): bool
+    public static function isInitialized(): bool
     {
-        return $this->connection !== null;
+        return static::$connection !== null;
     }
 
-    public function getConnection(): PDO
+    public static function getConnection(): PDO
     {
-        return $this->connection;
+        return static::$connection;
     }
 }
