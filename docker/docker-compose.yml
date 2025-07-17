@@ -1,0 +1,22 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-web-server
+    ports:
+      - "8080:80"
+    volumes:
+      - ../:/var/www/html
+    restart: unless-stopped
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-server
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    volumes:
+      - ./storage/mysql:/var/lib/mysql
+    restart: unless-stopped
