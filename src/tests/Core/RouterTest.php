@@ -2,10 +2,10 @@
 
 namespace App\Tests;
 
-use PHPUnit\Framework\TestCase;
-use \App\Core\Router;
+use App\Tests\BaseTestCase;
+use App\Core\Router;
 
-class RouteTest extends TestCase
+class RouterTest extends BaseTestCase
 {
     private $router;
 

@@ -34,6 +34,8 @@ class Router
                     return call_user_func([$controller, $method]);
                 }
             }
+        } else {
+            throw new \Exception("No route found for {$method} {$route}");
         }
     }
 }
