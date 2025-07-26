@@ -4,39 +4,58 @@ namespace App\controllers;
 
 use App\Core\View;
 use App\Core\Request;
+use App\Core\Validation;
+use App\services\ProductService;
 
 class ProductController
 {
-    public function __construct(private readonly Request $request) {}
+    public function __construct(
+        private readonly Request $request,
+        private readonly Validation $validator,
+        private readonly ProductService $productService
+    ) {}
 
-    public function createProductView()
+    public function productView()
     {
-        return View::render('product/create');
+        $products = $this->productService->getAllProducts();
+
+        var_dump($products);
+
+        return View::render('product/create', ['products' => $products]);
     }
 
     public function createNewProduct()
     {
-        // Acessar dados específicos do POST
-        $name = $this->request->post('name');
-        $price = $this->request->post('price');
+        $data = $this->request->post();
 
-        // Ou pegar todos os dados do POST
-        $postData = $this->request->post();
+        $errors = $this->validator->validate($data, [
+            'name' => ['required', 'string'],
+            'price' => ['required', 'float'],
+            'stock' => ['required', 'integer'],
+        ]);
 
-        // Validar os dados
-        if (empty($name) || empty($price)) {
+        if (isset($data['variations']) && is_array($data['variations'])) {
+            foreach ($data['variations'] as $variation) {
+                $errors = array_merge($errors, $this->validator->validate($variation, [
+                    'name' => ['required', 'string'],
+                    'price' => ['float:null'],
+                    'stock' => ['required', 'integer'],
+                ]));
+            }
+        }
+
+        if (!empty($errors)) {
             return View::render('product/create', [
-                'error' => 'Nome e preço são obrigatórios',
-                'data' => $postData
+                'errors' => $errors,
+                'data' => $data
             ]);
         }
 
-        // Processar criação do produto
-        // ... lógica de criação ...
+        $this->productService->createProduct($data);
 
         return View::render('product/create', [
             'success' => 'Produto criado com sucesso!',
-            'data' => $postData
+            'data' => $data
         ]);
     }
 
@@ -48,7 +67,7 @@ class ProductController
         $search = $this->request->get('search', '');
 
         // Ou pegar apenas campos específicos
-        $filters = $this->request->only(['search', 'category', 'status']);
+        // $filters = $this->request->only(['search', 'category', 'status']);
 
         // Lógica para buscar produtos com filtros
         // ... lógica de busca ...
@@ -60,7 +79,7 @@ class ProductController
                 'limit' => $limit,
                 'total' => 0
             ],
-            'filters' => $filters
+            // 'filters' => $filters
         ]);
     }
 }
