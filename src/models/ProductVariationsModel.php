@@ -10,16 +10,16 @@ class ProductVariationsModel extends BaseModel
 
     public static function selectJoin(): array
     {
-        $query = "SELECT 
-            p.id as produto_id,
-            p.nome as produto_nome,
-            p.preco as produto_preco,
+        $query = "SELECT
+            p.id AS produto_id,
+            p.nome AS produto_nome,
             p.quantidade as produto_quantidade,
-            v.id as variacao_id,
-            v.nome as variacao_nome,
-            v.preco as variacao_preco
-        FROM produtos AS p 
-        LEFT JOIN " . self::$table . " AS v ON v.produto_id = p.id";
+            p.preco as produto_preco,
+            GROUP_CONCAT(CONCAT(v.id, ':', v.nome, ':', v.preco) SEPARATOR '|') AS variations
+        FROM produtos AS p
+        LEFT JOIN variacoes_produto AS v ON v.produto_id = p.id
+        GROUP BY p.id
+        ORDER BY p.id;";
         return self::query($query);
     }
 }
